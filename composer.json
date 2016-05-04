@@ -1,0 +1,19 @@
+{
+	"name": "flamerohr/silverstripe-hostess",
+	"description": "Utilise Vagrant to run the SilverStripe installation with a consistent environment setup across teams",
+	"type": "silverstripe-module",
+	"keywords": ["silverstripe", "hostess", "localhost"],
+	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Christopher Joe",
+			"email": "flamer.ohr@gmail.com"
+		}
+	],
+	"require": {
+		"silverstripe/framework": ">=3.1",
+		"silverstripe/cms": ">=3.1"
+	},
+	"suggest": {
+	}
+}
