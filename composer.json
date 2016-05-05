@@ -1,5 +1,5 @@
 {
-	"name": "flamerohr/silverstripe-hostess",
+	"name": "flamerohr/hostess",
 	"description": "Utilise Vagrant to run the SilverStripe installation with a consistent environment setup across teams",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "hostess", "localhost"],
