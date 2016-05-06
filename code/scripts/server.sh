@@ -11,7 +11,7 @@ block="<VirtualHost *:$3 *:$4>
 	CustomLog /var/log/apache2/$1-access.log combined
 
 	<Directory $2>
-		Options Indexes FollowSymLinks
+		Options Indexes FollowSymLinks Includes ExecCGI
 		AllowOverride All
 		Require all granted
 	</Directory>
