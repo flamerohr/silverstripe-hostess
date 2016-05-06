@@ -1,80 +1,110 @@
 # Hostess
-SilverStripe module for setting up a vagrant for localhost development, the intention is to make it easier and faster to setup an environment to 
-get going with development on SilverStripe, while keeping it easy to configure by utilising SilverStripe's configuration tools.
+SilverStripe module for quickly setting up vagrant for localhost development, the intention is to make it easier and
+faster to setup an environment to get going with development on SilverStripe, while keeping it easy to configure by
+utilising SilverStripe's configuration tools.
 
-The idea comes from [Laravel's Homestead](https://github.com/laravel/homestead), which made setting up a local environment quick and easy.
+The idea comes from [Laravel's Homestead](https://github.com/laravel/homestead), which made setting up a local
+environment quick and easy.
 
 ## Requirements
-* SilverStripe framework (>=3.1)
 * Vagrant
 * Virtualbox
 * Access to hosts file, listed below
 
 ## Install
-Add require through composer:
+Clone with composer:
 ```
-"require-dev": {
-	"flamerohr/silverstripe-hostess": "~0.1"
-}
+cd ~
+composer clone https://github.com/flamerohr/silverstripe-hostess.git Hostess
 ```
-*Important*: DO NOT use this for production setup and use `require-dev` in composer instead of `require`
+*Important*: DO NOT use this for production setup
 
-You'll need to allow writing a Vagrantfile in your root directory, run these while you're in the root directory for your SilverStripe installation:
+*Note*: It is recommended not putting this within a SilverStripe installation, as this is a global localhost
+development. There is a plan to make installation specific environments.
+
+Then you'll need to create a copy of the config files required by Hostess
 ```
-touch Vagrantfile
-chmod 777 Vagrantfile
+bash ~/Hostess/setup.sh
 ```
 
-Then you'll need to run the dev task, it can be run in the web interface or command line, we're assuming command line otherwise you wouldn't need to
-be here.
-```
-./framework/sake dev/tasks/CreateVagrantfileTask
-```
+You can configure the localhost servers that you would like to start serving, details in the Documentation section.
 
 You'll need to add the host to your hosts file.
 * For Mac and Linux: `/etc/hosts`
 * For Windows: `C:\windows\system32\drivers\etc\hosts`
+By default
 ```
-192.168.10.15 localhost.dev
+192.168.20.20 hostess.vagrant
 ```
 
 You're done setting up.
 
 ## Execute
-Once you've completed installation, all you need to do is run `Vagrant up` and go to `localhost.dev` in your browser.
+Once you've completed installation, all you need to do:
+1. Change to the Hostess folder `cd ~/Hostess`
+1. Run `Vagrant up`
+1. Go to `hostess.vagrant` in your browser.
 
 ## Documentation
-You can customise the Vagrant setup with a `yml` file in your `mysite/_config` directory, the following are default values which you can
-change.
+You can run scripts after the environment has been setup by editing/adding your commands in
+`~/Sites/.hostess/afterSetup.sh`
+
+There are configuration options you can change to make the environment more suited for what your server requires.
+To make these configurations, edit the file `~/Sites/.hostess/config.yml`
+
+You can choose to use a different provider, box and OS, by changing `box`, make sure to include the corresponding `ostype`
+if you're using virtualbox:
 ```
-Vagrantfile:
-  # Used mainly by vagrant as a unique reference
-  name: 'silverstripe_localhost'
-  # The url you want to access the SilverStripe site in the browser
-  base_url: 'localhost.dev'
-  # IP address used by the vagrant, only change if it conflicts with your networking
-  ip: '192.168.10.15'
-  # The SilverStripe box to use
-  box: 'micmania1/silverstripe-jessie64'
-  # script to run after starting the vagrant, normally a bash shell script
-  post_script: ''
-  # The SilverStripe template to use for building the Vagrantfile, can add customisations here instead
-  template: 'Vagrantfile'
+provider: virtualbox
+box: micmania1/silverstripe-jessie64
+ostype: Debian_64
 ```
 
-Note about `post_script`, it is recommended to only use if you require installing extra software which the box you're using doesn't provide.
-This does slow down bootup of the Vagrant and potentially use a lot of bandwidth if you're reloading/provisioning a number of time.
-Please use the proper scripting language supported by the box you use.
+Sometimes you may get warnings about "non-hostonly network" and would require changing the IP address:
+```
+ip: "192.168.20.20"
+```
+
+Resources on your server/computer can be configured with:
+```
+memory: 2048
+cpus: 2
+```
+
+You can add folders that the environment can access with, importantly share the site source code with the environment:
+```
+folders:
+  - map: ~/Sites/silverstripe
+    to: /home/vagrant/silverstripe
+    type: nfs
+```
+
+Add site urls so that your browser may find it, make sure the map is in the hosts file with the IP defined above:
+```
+sites:
+  - map: hostess.vagrant
+    to: /home/vagrant/silverstripe/silverstripe
+    port: 80
+```
 
 After you've finished customising, do the following:
 1. Run the dev task as above, in the command line `./framework/sake dev/tasks/CreateVagrantfileTask`
 1. Run `vagrant reload --provision` to apply the new settings to vagrant.
+
+## Recommendation
+Installing the vagrant hosts updater plugin can save you a step of manually editing the hosts file, you can install it
+with the following command.
+```
+vagrant plugin install vagrant-hostsupdater
+```
 
 ## Maintainers
 * Christopher Joe cjoe@silverstripe.com
 
 ## Roadmap
 This is in no particular order:
-* A global environment for multiple sites running, with yml config to set things up.
+* Add SSL support
+* An installation specific environment for a single site running, with yml config to set things up.
 * Smarter vagrant config process
-* Keep SilverStripe dependency only if running this as a module, I don't think global should require a SilverStripe installation
+* Keep SilverStripe dependency only if running this as a module, I don't think global should require a SilverStripe
+installation.
