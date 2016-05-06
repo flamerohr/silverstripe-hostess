@@ -1,7 +1,6 @@
 # Hostess
-SilverStripe module for quickly setting up vagrant for localhost development, the intention is to make it easier and
-faster to setup an environment to get going with development on SilverStripe, while keeping it easy to configure by
-utilising SilverStripe's configuration tools.
+Module for quickly setting up vagrant for localhost development, the intention is to make it easier and
+faster to setup an environment to get going with development on SilverStripe, while keeping it easy to configure.
 
 The idea comes from [Laravel's Homestead](https://github.com/laravel/homestead), which made setting up a local
 environment quick and easy.
