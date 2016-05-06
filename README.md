@@ -38,6 +38,9 @@ By default
 
 You're done setting up.
 
+An _ss_environment.php file is included to illustrate the database username and password setup for the default
+environment that is being used.
+
 ## Execute
 Once you've completed installation, all you need to do:
 1. Change to the Hostess folder `cd ~/Hostess`
@@ -86,9 +89,10 @@ sites:
     port: 80
 ```
 
-After you've finished customising, do the following:
-1. Run the dev task as above, in the command line `./framework/sake dev/tasks/CreateVagrantfileTask`
-1. Run `vagrant reload --provision` to apply the new settings to vagrant.
+After you've finished customising, you'll need to provision vagrant with:
+```
+vagrant reload --provision
+```
 
 ## Recommendation
 Installing the vagrant hosts updater plugin can save you a step of manually editing the hosts file, you can install it
