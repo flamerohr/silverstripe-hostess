@@ -1,5 +1,7 @@
 class Hostess
   def Hostess.run(config, settings)
+    afterSetupPath = File.expand_path("~/Sites/.hostess/afterSetup.sh")
+    beforeSetupPath = File.expand_path("~/Sites/.hostess/beforeSetup.sh")
     scriptDir = File.dirname(__FILE__)
 
     ENV['VAGRANT_DEFAULT_PROVIDER'] = settings["provider"] ||= "virtualbox"
@@ -38,6 +40,10 @@ class Hostess
       end
     end
 
+    if File.exists? beforeSetupPath then
+        config.vm.provision "shell", path: beforeSetupPath, privileged: false
+    end
+
     if settings.include? 'sites'
       settings["sites"].each do |site|
         config.vm.provision "shell" do |s|
@@ -59,5 +65,10 @@ class Hostess
       # set git email for 'vagrant' user on VM
       config.vm.provision :shell, :inline => "echo 'Saving local git email to VM...' && sudo -i -u vagrant git config --global user.email '#{git_email.chomp}'"
     end
+
+    if File.exists? afterSetupPath then
+        config.vm.provision "shell", path: afterSetupPath, privileged: false
+    end
+
   end
 end

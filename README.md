@@ -106,6 +106,10 @@ vagrant plugin install vagrant-hostsupdater
 
 ## Roadmap
 This is in no particular order:
+* Add `*.sspak` snapshot support, or database loader
+* Port forwarding for database and other access from host machine
+* Investigate Parallels support
+* Switch for Apache or Nginx to be used
 * Add SSL support
 * An installation specific environment for a single site running, with yml config to set things up.
 * Smarter vagrant config process
