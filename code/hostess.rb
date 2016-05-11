@@ -3,16 +3,16 @@ class Hostess
     scriptDir = File.dirname(__FILE__)
 
     # set the script that will run after setting things up
-    afterSetupPath = File.expand_path(scriptDir + "../afterSetup.sh")
-    if not File.exists? afterSetupPath then
+#     afterSetupPath = File.expand_path(scriptDir + "../afterSetup.sh")
+#     if not File.exists? afterSetupPath then
       afterSetupPath = File.expand_path("~/Sites/.hostess/afterSetup.sh")
-    end
+#     end
 
     # set the script that will run before setting things up
-    beforeSetupPath = File.expand_path(scriptDir + "../beforeSetup.sh")
-    if not File.exists? beforeSetupPath then
+#     beforeSetupPath = File.expand_path(scriptDir + "../beforeSetup.sh")
+#     if not File.exists? beforeSetupPath then
       beforeSetupPath = File.expand_path("~/Sites/.hostess/beforeSetup.sh")
-    end
+#     end
 
     ENV['VAGRANT_DEFAULT_PROVIDER'] = settings["provider"] ||= "virtualbox"
 
