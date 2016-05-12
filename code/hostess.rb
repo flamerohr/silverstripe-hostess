@@ -51,7 +51,7 @@ class Hostess
     end
 
     # create a vagrant public folder
-    config.vm.provision :shell, :inline => "mkdir /vagrant/public"
+    config.vm.provision :shell, :inline => "mkdir -p /vagrant/public || echo '/vagrant/public already exists'"
 
     # run scripts before setup
     if File.exists? beforeSetupPath then
