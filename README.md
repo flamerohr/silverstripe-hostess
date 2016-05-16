@@ -36,8 +36,6 @@ By default
 192.168.20.20 hostess.vagrant
 ```
 
-You're done setting up.
-
 An _ss_environment.php file is included to illustrate the database username and password setup for the default
 environment that is being used.
 
