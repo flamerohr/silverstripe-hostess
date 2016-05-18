@@ -7,7 +7,8 @@ require 'pp'
 require File.expand_path(File.dirname(__FILE__) + '/code/hostess.rb')
 scriptDir = File.dirname(__FILE__)
 
-configPath = File.expand_path(scriptDir + "../config.yml")
+configPath = File.expand_path(scriptDir + "/../config.yml")
+
 if not File.exists? configPath then
 	configPath = File.expand_path("~/Sites/.hostess/config.yml")
 end
