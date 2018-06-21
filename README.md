@@ -1,76 +1,85 @@
 # Hostess
-Module for quickly setting up vagrant for localhost development, the intention is to make it easier and
+
+Module to help set up a virtual environment for localhost development, the intention is to make it easier and
 faster to setup an environment to get going with development on SilverStripe, while keeping it easy to configure.
 
 The idea comes from [Laravel's Homestead](https://github.com/laravel/homestead), which made setting up a local
 environment quick and easy.
 
 ## Requirements
+
 * Vagrant
-* Virtualbox
-* Access to hosts file, listed below
+* Virtualbox (or Parallels)
 
 ## Install
+
 Clone with composer:
+
+```sh
+> composer clone https://github.com/flamerohr/silverstripe-hostess.git
+> cd silverstripe-hostess
 ```
-cd ~
-composer clone https://github.com/flamerohr/silverstripe-hostess.git Hostess
-```
-*Important*: DO NOT use this for production setup
+
+**Important**: DO NOT use this for production setup
 
 *Note*: It is recommended not putting this within a SilverStripe installation, as this is a global localhost
 development. There is a plan to make installation specific environments.
 
-Then you'll need to create a copy of the config files required by Hostess
-```
-bash ~/Hostess/setup.sh
+## Recommendation
+
+Installing the `vagrant-hostsupdater` plugin can save you a step of manually editing the hosts file, you can install it
+with the following command.
+
+```sh
+> vagrant plugin install vagrant-hostsupdater
 ```
 
-You can configure the localhost servers that you would like to start serving, details in the Documentation section.
+## Getting started
 
-You'll need to add the host to your hosts file.
+Then you'll need to edit the config found in `settings/config.yml`
+
+If you don't have `vagrant-hostsupdater` installed, then you'll also need to add the domains you have to your hosts file.
+
 * For Mac and Linux: `/etc/hosts`
 * For Windows: `C:\windows\system32\drivers\etc\hosts`
-By default
-```
-192.168.20.20 hostess.vagrant
+
+For the default vagrant site:
+
+```txt
+192.168.20.20  hostess.vagrant
 ```
 
-An _ss_environment.php file is included to illustrate the database username and password setup for the default
-environment that is being used.
+Once you've completed installation and the setup above, all you need to do is:
 
-## Execute
-Once you've completed installation, all you need to do:
-1. Change to the Hostess folder `cd ~/Hostess`
-1. Run `Vagrant up`
-1. Go to `hostess.vagrant` in your browser.
+1. Run `> Vagrant up`
+1. Go to `http://hostess.vagrant` in your browser.
 
 ## Documentation
-You can run scripts after the environment has been setup by editing/adding your commands in
-`~/Sites/.hostess/afterSetup.sh`
 
-There are configuration options you can change to make the environment more suited for what your server requires.
-To make these configurations, edit the file `~/Sites/.hostess/config.yml`
+### Scripts
 
-You can choose to use a different provider, box and OS, by changing `box`, make sure to include the corresponding `ostype`
-if you're using virtualbox:
-```
-provider: virtualbox
-box: micmania1/silverstripe-jessie64
-ostype: Debian_64
-```
+You can run scripts before or after the environment has been setup by editing/adding your commands to `settings/before.sh` or
+`settings/after.sh`
 
-Sometimes you may get warnings about "non-hostonly network" and would require changing the IP address:
-```
-ip: "192.168.20.20"
-```
+### Configuration
 
-Resources on your server/computer can be configured with:
-```
-memory: 2048
-cpus: 2
-```
+The config file `settings/config.yml` contains options available to customise the environment to suit your needs and requirements. The options are listed in this table:
 
+| Option | Default | Description |
+|--- | --- | --- |
+| `name` | `silverstripe_hostess` | The name for the vagrant machine, you may have multiple instances of vagrant up for different environment setups |
+| `hostname` | `silverstripe.hostess` | The default hostname the machine shall take, currently won't show anything, have plans to create a "directory" of hosted sites |
+| `box` | `zauberfisch/silverstripe-jessie64` | The vagrant box to use, you can find other kinds of boxes to use on the Vagrant website |
+| `ip` | `10.0.20.20` | The IP address the machine shall use, maybe you want this to be on your network |
+| `memory` | `2048` | How much RAM do you want your machine to have |
+| `cpus` | `2` | The number of CPUs your machine will utilise for processing |
+| `provider` | `virtualbox` | Which virtual machine technology shall be used, I know some prefer vmware or parallels |
+| `ostype` | `Debian_64` | This is mainly for Virtualbox settings |
+| `sites` | N/A | Example is given |
+
+### Setting up sites
+
+**Important** This section is out of date, please refer to the `settings/config.yml` example on how to set sites up
 You can add folders that the environment can access with, importantly share the site source code with the environment:
 ```
 folders:
@@ -91,16 +100,6 @@ After you've finished customising, you'll need to provision vagrant with:
 ```
 vagrant reload --provision
 ```
-
-## Recommendation
-Installing the vagrant hosts updater plugin can save you a step of manually editing the hosts file, you can install it
-with the following command.
-```
-vagrant plugin install vagrant-hostsupdater
-```
-
-## Maintainers
-* Christopher Joe cjoe@silverstripe.com
 
 ## Roadmap
 This is in no particular order:

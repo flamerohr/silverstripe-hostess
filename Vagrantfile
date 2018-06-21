@@ -5,17 +5,13 @@ require 'yaml'
 require 'pp'
 
 require File.expand_path(File.dirname(__FILE__) + '/code/hostess.rb')
+
 scriptDir = File.dirname(__FILE__)
-
-configPath = File.expand_path(scriptDir + "/../config.yml")
-
-if not File.exists? configPath then
-	configPath = File.expand_path("~/Sites/.hostess/config.yml")
-end
 
 Vagrant.configure(2) do |config|
 	settings = {}
 
+	configPath = File.expand_path(scriptDir + "/settings/config.yml")
 	if File.exists? configPath then
 		settings = YAML::load(File.read(configPath))
 	end

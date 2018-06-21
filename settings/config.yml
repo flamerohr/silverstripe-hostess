@@ -1,0 +1,8 @@
+---
+sites:
+  - from: sites/assets
+    type: nfs
+  - from: sites/silverstripe
+    domain: hostess.vagrant
+    type: nfs
+

@@ -1,27 +1,45 @@
+scriptDir = File.dirname(__FILE__)
+baseDir = "/vagrant/base"
+rootDir = "/vagrant/root"
+
+def setupSite(site, config)
+  from = site["from"]
+  sourceFolder = from
+  targetFolder = rootDir + from
+
+  if !from.start_with?("/") then
+    sourceFolder = File.expand_path(scriptDir + "/" + from)
+    targetFolder = File.expand_path(baseDir + "/" + from)
+  end
+
+  if !File.exists? sourceFolder then
+    return
+  end
+  config.vm.synced_folder sourceFolder, targetFolder, type: site["type"] ||= nil
+
+  if site.include? 'domain' then
+    config.vm.provision "shell" do |s|
+      s.path = File.expand_path(scriptDir + "/scripts/server.sh")
+      s.args = [
+        site["domain"],
+        targetFolder,
+        site["port"] ||= "80",
+        site["ssl"] ||= "443"
+      ]
+    end
+  end
+end
+
 class Hostess
   def Hostess.run(config, settings)
-    scriptDir = File.dirname(__FILE__)
-
-    # set the script that will run after setting things up
-    afterSetupPath = File.expand_path(scriptDir + "/../../afterSetup.sh")
-    if not File.exists? afterSetupPath then
-      afterSetupPath = File.expand_path("~/Sites/.hostess/afterSetup.sh")
-    end
-
-    # set the script that will run before setting things up
-    beforeSetupPath = File.expand_path(scriptDir + "/../../beforeSetup.sh")
-    if not File.exists? beforeSetupPath then
-      beforeSetupPath = File.expand_path("~/Sites/.hostess/beforeSetup.sh")
-    end
-
     ENV['VAGRANT_DEFAULT_PROVIDER'] = settings["provider"] ||= "virtualbox"
 
     # Prevent TTY Errors
     config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
-    config.vm.box = settings["box"] ||= "micmania1/silverstripe-jessie64"
+    config.vm.box = settings["box"] ||= "zauberfisch/silverstripe-jessie64"
     config.vm.hostname = settings["hostname"] ||= "silverstripe.hostess"
-    config.vm.network "private_network", ip: settings["ip"] ||= "192.168.20.20"
+    config.vm.network "private_network", ip: settings["ip"] ||= "10.0.20.20"
 
     # Use host for ssh keys etc.
     config.ssh.forward_agent = true
@@ -38,33 +56,25 @@ class Hostess
     # Configure A Few Parallels Settings
     config.vm.provider "parallels" do |v|
       v.name = settings["name"] ||= "silverstripe_hostess"
-      v.memory = settings["memory"] ||= 2048
-      v.cpus = settings["cpus"] ||= 2
+      v.memory = settings["memory"] ||= "2048"
+      v.cpus = settings["cpus"] ||= "2"
       v.update_guest_tools = true
-    end
-
-    # Register All Of The Configured Shared Folders
-    if settings.include? 'folders'
-      settings["folders"].each do |folder|
-        config.vm.synced_folder folder["map"], folder["to"], type: folder["type"] ||= nil
-      end
     end
 
     # create a vagrant public folder
     config.vm.provision :shell, :inline => "mkdir -p /vagrant/public || echo '/vagrant/public already exists'"
 
     # run scripts before setup
+    beforeSetupPath = File.expand_path(scriptDir + "/../settings/before.sh")
     if File.exists? beforeSetupPath then
         config.vm.provision "shell", path: beforeSetupPath, privileged: false
     end
 
-    # Setup sites that were listed
-    if settings.include? 'sites'
+    domains = []
+    # Register site folders
+    if settings.include? 'sites' then
       settings["sites"].each do |site|
-        config.vm.provision "shell" do |s|
-          s.path = scriptDir + "/scripts/server.sh"
-          s.args = [site["map"], site["to"], site["port"] ||= "80", site["ssl"] ||= "443"]
-        end
+        setupSite(site, config)
       end
     end
 
@@ -82,6 +92,7 @@ class Hostess
     end
 
     # run scripts after setup
+    afterSetupPath = File.expand_path(scriptDir + "/../settings/after.sh")
     if File.exists? afterSetupPath then
         config.vm.provision "shell", path: afterSetupPath, privileged: false
     end
